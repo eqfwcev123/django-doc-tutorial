@@ -5,6 +5,10 @@
     <title>Title</title>
 </head>
 <body>
-    <h1>{{ question.choice }}</h1>
+    <h1>{{ question.question_text }}</h1>
+    <h1>{{ question.pub_date }}</h1>
+    {% for choice in question.choice_set.all %}
+        <h4>{{ choice.choice_text }}</h4>
+    {% endfor %}
 </body>
 </html>
