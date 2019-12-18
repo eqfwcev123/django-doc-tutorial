@@ -1,12 +1,13 @@
 from django.urls import path
 
-from .views import index
+from polls.views import vote, DetailView, ResultsView
+from polls.views import IndexView
 
-from polls.views import detail, results, vote
-
+app_name = 'polls'  # This is the application namespace
+# as_view() : Returns a callable view that takes a request and returns a response
 urlpatterns = [
-    path('', index, name='index'),
-    path('<int:question_id>/detail/', detail, name='detail'),
-    path('<int:question_id>/results/', results, name='results'),
-    path('<int:question_id>/vote/', vote, name='vote')
+    path('', IndexView.as_view(), name='index'),
+    path('<int:pk>/detail/', DetailView.as_view(), name='detail'),
+    path('<int:pk>/results/', ResultsView.as_view(), name='results'),
+    path('<int:pk>/vote/', vote, name='vote'),
 ]

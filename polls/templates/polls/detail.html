@@ -6,9 +6,18 @@
 </head>
 <body>
     <h1>{{ question.question_text }}</h1>
-    <h1>{{ question.pub_date }}</h1>
-    {% for choice in question.choice_set.all %}
-        <h4>{{ choice.choice_text }}</h4>
-    {% endfor %}
+    {% if error_message %}
+        <p><strong>{{ error_message }}</strong></p>
+    {% endif %}
+    <form action="{% url 'polls:vote' question.id %}" method="post">
+        {% csrf_token %}
+        {#  choice_set.all 은 해당 Question 모델 객체를 Foreign key로 참조하는 모든 Choice모델을 가지고 온다   #}
+        {# for loop을 몇번 돌았는지 알려준다 #}
+        {% for choice in question.choice_set.all %}
+            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+        {% endfor %}
+        <input type="submit" value="Vote">
+    </form>
 </body>
 </html>
