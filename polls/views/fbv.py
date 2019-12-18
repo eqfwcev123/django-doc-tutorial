@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.template import loader
 from django.views import generic
 
-from .models import Question, Choice
+from polls.models import Question, Choice
 from django.shortcuts import render, get_object_or_404, redirect
 
 
@@ -56,19 +56,29 @@ class ResultsView(generic.DetailView):
 
 
 def vote(request, pk):
-    question = get_object_or_404(Question, pk=pk)
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        return render(request,
-                      'polls/detail.html', {
-                          'question': question,
-                          'error_message': 'You did not select a choice'
-                      })
-    else:
-        selected_choice.votes += 1
-        selected_choice.save()
-    return redirect('polls:results', question.id)
+    # question = get_object_or_404(Question, pk=pk)
+    # try:
+    #     selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    # except (KeyError, Choice.DoesNotExist):
+    #     return render(request,
+    #                   'polls/detail.html', {
+    #                       'question': question,
+    #                       'error_message': 'You did not select a choice'
+    #                   })
+    # else:
+    #     selected_choice.votes += 1
+    #     selected_choice.save()
+    # return redirect('polls:results', question.id)
+    if request.method == 'POST':
+        try:
+            choice_pk = request.POST['choice']  # 해당 choice의 id 번호를 가지고 온다
+            choice = get_object_or_404(Choice, pk=choice_pk)  # 가지고온 id번호를 이용해서 정보를 가지고 온다
+        except (KeyError, Choice.DoesNotExist):
+            return redirect('polls:detail', pk=pk)  # 왼쪽에 있는 pk는 urlpatterns에 나와있는 pk 이다.
+        else:
+            choice.votes += 1  # 데이터베이스에 votes 의 값을 1 추가
+            choice.save()
+        return redirect('polls:results', pk=pk)
 
 
 def results(request, pk):
